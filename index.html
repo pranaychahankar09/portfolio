@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pranay Chahankar — Data Analyst</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<style>
+  :root {
+    --ink: #0a0a0f;
+    --paper: #f5f2eb;
+    --cream: #ede9df;
+    --gold: #c8a84b;
+    --rust: #c45c2e;
+    --muted: #7a7a8a;
+    --line: rgba(10,10,15,0.12);
+    --green: #2a7a4a;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--paper); color: var(--ink); font-family: 'DM Mono', monospace; font-size: 14px; line-height: 1.7; overflow-x: hidden; }
+  body::before { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events: none; z-index: 9999; opacity: 0.6; }
+  .grid-bg { position: fixed; inset: 0; background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px); background-size: 60px 60px; pointer-events: none; z-index: 0; }
+
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; padding: 1.4rem 4rem; background: rgba(245,242,235,0.88); backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
+  .nav-logo { font-family: 'DM Serif Display', serif; font-size: 1.3rem; color: var(--ink); text-decoration: none; letter-spacing: -0.02em; }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a { text-decoration: none; color: var(--muted); font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--ink); }
+
+  #hero { position: relative; min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr; padding-top: 80px; z-index: 1; }
+  .hero-left { display: flex; flex-direction: column; justify-content: center; padding: 6rem 4rem; border-right: 1px solid var(--line); }
+  .hero-tag { font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem; }
+  .hero-tag::before { content: ''; display: inline-block; width: 32px; height: 1px; background: var(--gold); }
+  h1 { font-family: 'DM Serif Display', serif; font-size: clamp(3.2rem, 5.5vw, 6rem); line-height: 0.95; letter-spacing: -0.03em; color: var(--ink); margin-bottom: 1.5rem; }
+  h1 em { font-style: italic; color: var(--rust); }
+  .hero-desc { font-size: 0.85rem; color: var(--muted); max-width: 380px; line-height: 1.9; margin-bottom: 3rem; }
+  .hero-cta { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .btn-primary { display: inline-flex; align-items: center; gap: 0.5rem; background: var(--ink); color: var(--paper); padding: 0.85rem 2rem; text-decoration: none; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; transition: background 0.2s, transform 0.2s; border: 1px solid var(--ink); cursor: pointer; font-family: 'DM Mono', monospace; }
+  .btn-primary:hover { background: var(--rust); border-color: var(--rust); transform: translateY(-2px); }
+  .btn-outline { display: inline-flex; align-items: center; gap: 0.5rem; background: transparent; color: var(--ink); padding: 0.85rem 2rem; text-decoration: none; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; border: 1px solid var(--ink); transition: background 0.2s, color 0.2s, transform 0.2s; cursor: pointer; font-family: 'DM Mono', monospace; }
+  .btn-outline:hover { background: var(--ink); color: var(--paper); transform: translateY(-2px); }
+  .hero-right { display: flex; flex-direction: column; justify-content: center; padding: 6rem 4rem; background: var(--cream); }
+  .chart-container { position: relative; width: 100%; aspect-ratio: 1.2; max-width: 480px; margin: 0 auto; }
+  .chart-svg { width: 100%; height: 100%; }
+  .bar { transition: opacity 0.3s; }
+  .bar:hover { opacity: 0.7; }
+  .stat-badges { display: flex; gap: 1rem; margin-top: 2rem; flex-wrap: wrap; }
+  .stat-badge { flex: 1; min-width: 100px; background: var(--paper); border: 1px solid var(--line); padding: 1rem; text-align: center; }
+  .stat-badge .num { font-family: 'DM Serif Display', serif; font-size: 2rem; color: var(--ink); display: block; line-height: 1; margin-bottom: 0.3rem; }
+  .stat-badge .label { font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+
+  section { position: relative; z-index: 1; }
+  .section-label { font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 3rem; display: flex; align-items: center; gap: 1rem; }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+  h2 { font-family: 'DM Serif Display', serif; font-size: clamp(2.2rem, 4vw, 3.5rem); line-height: 1.05; letter-spacing: -0.025em; margin-bottom: 1.5rem; }
+
+  #about { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--line); }
+  .about-left { padding: 6rem 4rem; border-right: 1px solid var(--line); }
+  .about-right { padding: 6rem 4rem; background: var(--ink); color: var(--paper); }
+  .about-right .section-label { color: var(--gold); }
+  .about-right .section-label::after { background: rgba(255,255,255,0.15); }
+  .about-right h2 { color: var(--paper); }
+  .about-body { font-size: 0.85rem; color: var(--muted); line-height: 2; margin-bottom: 1.5rem; }
+  .about-right .about-body { color: rgba(245,242,235,0.65); }
+  .skills-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+  .skill-item { display: flex; align-items: center; gap: 0.6rem; font-size: 0.75rem; color: rgba(245,242,235,0.8); padding: 0.6rem 0; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .skill-dot { width: 6px; height: 6px; background: var(--gold); flex-shrink: 0; }
+
+  #projects { padding: 7rem 4rem; border-top: 1px solid var(--line); }
+  .projects-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 4rem; flex-wrap: wrap; gap: 2rem; }
+  .projects-grid { display: grid; grid-template-columns: repeat(2, 1fr); border: 1px solid var(--line); }
+  .project-card { padding: 2.5rem; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); position: relative; transition: background 0.25s; cursor: pointer; }
+  .project-card:nth-child(2n) { border-right: none; }
+  .project-card:hover { background: var(--cream); }
+  .project-num { font-size: 0.65rem; letter-spacing: 0.15em; color: var(--muted); margin-bottom: 1.5rem; }
+  .project-icon { width: 48px; height: 48px; background: var(--ink); display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; }
+  .project-icon svg { width: 22px; height: 22px; }
+  .project-card h3 { font-family: 'DM Serif Display', serif; font-size: 1.25rem; margin-bottom: 0.75rem; line-height: 1.2; }
+  .project-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.8; margin-bottom: 1.5rem; }
+  .project-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .tag { font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); border: 1px solid var(--line); padding: 0.25rem 0.6rem; background: var(--paper); }
+  .click-hint { font-size: 0.65rem; color: var(--gold); margin-top: 1.2rem; letter-spacing: 0.08em; }
+
+  .modal-overlay { position: fixed; inset: 0; background: rgba(10,10,15,0.75); backdrop-filter: blur(6px); z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; padding: 2rem; }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal { background: var(--paper); border: 1px solid var(--line); max-width: 700px; width: 100%; max-height: 88vh; overflow-y: auto; transform: translateY(30px); transition: transform 0.3s; position: relative; }
+  .modal-overlay.open .modal { transform: translateY(0); }
+  .modal-header { padding: 2.5rem 2.5rem 1.5rem; border-bottom: 1px solid var(--line); position: relative; }
+  .modal-close { position: absolute; top: 1.5rem; right: 1.5rem; background: none; border: 1px solid var(--line); width: 36px; height: 36px; cursor: pointer; font-size: 1rem; color: var(--muted); display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+  .modal-close:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .modal-tag { font-size: 0.65rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.75rem; }
+  .modal-title { font-family: 'DM Serif Display', serif; font-size: 1.8rem; line-height: 1.1; }
+  .modal-body { padding: 2rem 2.5rem 2.5rem; }
+  .modal-section { margin-bottom: 2rem; }
+  .modal-section h4 { font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.75rem; }
+  .modal-section p, .modal-section li { font-size: 0.82rem; color: var(--muted); line-height: 1.9; }
+  .modal-section ul { padding-left: 1.2rem; }
+  .modal-section ul li { margin-bottom: 0.4rem; }
+  .modal-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .modal-tags .tag { background: var(--cream); }
+  .modal-links { display: flex; gap: 1rem; margin-top: 2rem; }
+
+  #experience { border-top: 1px solid var(--line); display: grid; grid-template-columns: 1fr 2fr; }
+  .exp-left { padding: 6rem 4rem; border-right: 1px solid var(--line); background: var(--cream); }
+  .exp-right { padding: 6rem 4rem; }
+  .exp-item { display: grid; grid-template-columns: 140px 1fr; gap: 2rem; padding: 2.5rem 0; border-bottom: 1px solid var(--line); }
+  .exp-item:first-child { padding-top: 0; }
+  .exp-item:last-child { border-bottom: none; }
+  .exp-date { font-size: 0.68rem; color: var(--muted); padding-top: 0.2rem; }
+  .exp-content h3 { font-family: 'DM Serif Display', serif; font-size: 1.2rem; margin-bottom: 0.25rem; }
+  .exp-company { font-size: 0.75rem; color: var(--gold); letter-spacing: 0.08em; margin-bottom: 0.75rem; }
+  .exp-body { font-size: 0.78rem; color: var(--muted); line-height: 1.85; }
+  .exp-body ul { padding-left: 1.1rem; }
+  .exp-body ul li { margin-bottom: 0.35rem; }
+
+  #certifications { padding: 6rem 4rem; border-top: 1px solid var(--line); background: var(--cream); }
+  .certs-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 3rem; }
+  .cert-card { background: var(--paper); border: 1px solid var(--line); padding: 1.75rem; transition: transform 0.2s, box-shadow 0.2s; }
+  .cert-card:hover { transform: translateY(-3px); box-shadow: 0 8px 32px rgba(10,10,15,0.08); }
+  .cert-icon { width: 40px; height: 40px; background: var(--ink); display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; }
+  .cert-name { font-family: 'DM Serif Display', serif; font-size: 1rem; margin-bottom: 0.3rem; line-height: 1.3; }
+  .cert-issuer { font-size: 0.7rem; color: var(--gold); letter-spacing: 0.08em; margin-bottom: 0.2rem; }
+  .cert-date { font-size: 0.68rem; color: var(--muted); }
+
+  #tools { padding: 4rem 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--ink); overflow: hidden; }
+  .marquee-wrapper { display: flex; }
+  .marquee-track { display: flex; animation: marquee 22s linear infinite; white-space: nowrap; flex-shrink: 0; }
+  .marquee-item { display: inline-flex; align-items: center; gap: 0.75rem; padding: 0 3rem; font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(245,242,235,0.4); border-right: 1px solid rgba(255,255,255,0.1); transition: color 0.2s; }
+  .marquee-item:hover { color: var(--gold); }
+  .marquee-dot { width: 4px; height: 4px; background: var(--gold); border-radius: 50%; flex-shrink: 0; }
+  @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+  #contact { padding: 8rem 4rem; border-top: 1px solid var(--line); display: grid; grid-template-columns: 1.2fr 1fr; gap: 8rem; align-items: start; }
+  .contact-left h2 { font-size: clamp(2.5rem, 4.5vw, 4.5rem); margin-bottom: 1rem; }
+  .contact-left p { font-size: 0.85rem; color: var(--muted); line-height: 1.9; max-width: 400px; margin-bottom: 2.5rem; }
+  .contact-links { display: flex; flex-direction: column; gap: 1rem; }
+  .contact-link { display: flex; align-items: center; gap: 1rem; text-decoration: none; color: var(--ink); font-size: 0.78rem; padding: 1rem 1.25rem; border: 1px solid var(--line); transition: all 0.2s; letter-spacing: 0.05em; }
+  .contact-link:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .contact-link:hover svg { stroke: var(--paper); }
+  .contact-link:hover .link-arrow { transform: translate(3px, -3px); }
+  .link-arrow { margin-left: auto; transition: transform 0.2s; }
+  .contact-form { background: var(--cream); padding: 3rem; border: 1px solid var(--line); }
+  .form-field { margin-bottom: 1.5rem; }
+  .form-field label { display: block; font-size: 0.65rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem; }
+  .form-field input, .form-field textarea { width: 100%; background: var(--paper); border: 1px solid var(--line); padding: 0.85rem 1rem; font-family: 'DM Mono', monospace; font-size: 0.8rem; color: var(--ink); outline: none; transition: border-color 0.2s; resize: none; }
+  .form-field input:focus, .form-field textarea:focus { border-color: var(--gold); }
+  .form-submit { width: 100%; background: var(--ink); color: var(--paper); border: none; padding: 1rem; font-family: 'DM Mono', monospace; font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; cursor: pointer; transition: background 0.2s; }
+  .form-submit:hover { background: var(--rust); }
+  .form-submit:disabled { background: var(--muted); cursor: not-allowed; }
+  .form-status { margin-top: 1rem; font-size: 0.75rem; padding: 0.75rem 1rem; display: none; }
+  .form-status.success { background: rgba(42,122,74,0.12); color: var(--green); border: 1px solid rgba(42,122,74,0.25); display: block; }
+  .form-status.error { background: rgba(196,92,46,0.1); color: var(--rust); border: 1px solid rgba(196,92,46,0.2); display: block; }
+  .setup-note { font-size: 0.68rem; color: var(--muted); margin-top: 1rem; line-height: 1.7; padding: 1rem; background: rgba(200,168,75,0.08); border: 1px solid rgba(200,168,75,0.2); }
+  .setup-note strong { color: var(--gold); }
+
+  footer { padding: 2rem 4rem; border-top: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 1; }
+  footer span { font-size: 0.68rem; color: var(--muted); letter-spacing: 0.08em; }
+
+  .fade-up { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 900px) {
+    nav { padding: 1.2rem 2rem; } .nav-links { gap: 1.2rem; }
+    #hero { grid-template-columns: 1fr; } .hero-left { padding: 4rem 2rem 3rem; border-right: none; border-bottom: 1px solid var(--line); } .hero-right { padding: 3rem 2rem 4rem; }
+    #about { grid-template-columns: 1fr; } .about-left { padding: 4rem 2rem; border-right: none; border-bottom: 1px solid var(--line); } .about-right { padding: 4rem 2rem; }
+    .projects-grid { grid-template-columns: 1fr; } .project-card { border-right: none !important; } #projects { padding: 5rem 2rem; }
+    #experience { grid-template-columns: 1fr; } .exp-left { padding: 4rem 2rem; border-right: none; border-bottom: 1px solid var(--line); } .exp-right { padding: 4rem 2rem; } .exp-item { grid-template-columns: 1fr; gap: 0.5rem; }
+    .certs-grid { grid-template-columns: 1fr; } #certifications { padding: 5rem 2rem; }
+    #contact { grid-template-columns: 1fr; gap: 3rem; padding: 5rem 2rem; }
+    footer { padding: 1.5rem 2rem; flex-direction: column; gap: 0.5rem; text-align: center; }
+  }
+</style>
+</head>
+<body>
+<div class="grid-bg"></div>
+
+<nav>
+  <a href="#hero" class="nav-logo">Pranay Chahankar</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#certifications">Certs</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<section id="hero">
+  <div class="hero-left">
+    <div class="hero-tag">Data Analyst · Open to Opportunities</div>
+    <h1>Making <em>data speak</em> for business</h1>
+    <p class="hero-desc">I'm Pranay — a Data Analyst skilled in SQL, Python, Power BI, Tableau and Advanced Excel. I clean complex datasets, build interactive dashboards, and surface insights that drive real decisions.</p>
+    <div class="hero-cta">
+      <a href="#projects" class="btn-primary">View My Work →</a>
+      <button class="btn-outline" onclick="downloadResume()">⬇ Download Resume</button>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="chart-container">
+      <svg class="chart-svg" viewBox="0 0 480 360" xmlns="http://www.w3.org/2000/svg">
+        <rect x="50" y="20" width="410" height="260" fill="none" stroke="rgba(10,10,15,0.08)" stroke-width="1"/>
+        <line x1="50" y1="85" x2="460" y2="85" stroke="rgba(10,10,15,0.07)" stroke-width="1"/>
+        <line x1="50" y1="150" x2="460" y2="150" stroke="rgba(10,10,15,0.07)" stroke-width="1"/>
+        <line x1="50" y1="215" x2="460" y2="215" stroke="rgba(10,10,15,0.07)" stroke-width="1"/>
+        <defs>
+          <linearGradient id="bg1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0a0a0f"/><stop offset="100%" stop-color="#3a3a4a"/></linearGradient>
+          <linearGradient id="bg2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#c8a84b"/><stop offset="100%" stop-color="#c45c2e"/></linearGradient>
+        </defs>
+        <rect class="bar" x="70" y="160" width="28" height="120" fill="url(#bg1)" rx="2"/>
+        <rect class="bar" x="130" y="100" width="28" height="180" fill="url(#bg1)" rx="2"/>
+        <rect class="bar" x="190" y="70" width="28" height="210" fill="url(#bg1)" rx="2"/>
+        <rect class="bar" x="250" y="120" width="28" height="160" fill="url(#bg1)" rx="2"/>
+        <rect class="bar" x="310" y="60" width="28" height="220" fill="url(#bg1)" rx="2"/>
+        <rect class="bar" x="370" y="85" width="28" height="195" fill="url(#bg1)" rx="2"/>
+        <rect class="bar" x="430" y="40" width="28" height="240" fill="url(#bg1)" rx="2"/>
+        <rect class="bar" x="98" y="190" width="22" height="90" fill="url(#bg2)" rx="2" opacity="0.9"/>
+        <rect class="bar" x="158" y="145" width="22" height="135" fill="url(#bg2)" rx="2" opacity="0.9"/>
+        <rect class="bar" x="218" y="115" width="22" height="165" fill="url(#bg2)" rx="2" opacity="0.9"/>
+        <rect class="bar" x="278" y="155" width="22" height="125" fill="url(#bg2)" rx="2" opacity="0.9"/>
+        <rect class="bar" x="338" y="95" width="22" height="185" fill="url(#bg2)" rx="2" opacity="0.9"/>
+        <rect class="bar" x="398" y="125" width="22" height="155" fill="url(#bg2)" rx="2" opacity="0.9"/>
+        <polyline points="84,155 144,98 204,68 264,118 324,58 384,83 444,38" fill="none" stroke="#c8a84b" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+        <circle cx="84" cy="155" r="5" fill="#f5f2eb" stroke="#c8a84b" stroke-width="2.5"/>
+        <circle cx="144" cy="98" r="5" fill="#f5f2eb" stroke="#c8a84b" stroke-width="2.5"/>
+        <circle cx="204" cy="68" r="5" fill="#f5f2eb" stroke="#c8a84b" stroke-width="2.5"/>
+        <circle cx="264" cy="118" r="5" fill="#f5f2eb" stroke="#c8a84b" stroke-width="2.5"/>
+        <circle cx="324" cy="58" r="5" fill="#f5f2eb" stroke="#c8a84b" stroke-width="2.5"/>
+        <circle cx="384" cy="83" r="5" fill="#f5f2eb" stroke="#c8a84b" stroke-width="2.5"/>
+        <circle cx="444" cy="38" r="5" fill="#c8a84b" stroke="#c8a84b" stroke-width="2.5"/>
+        <rect x="390" y="8" width="80" height="26" fill="#0a0a0f" rx="2"/>
+        <text x="430" y="25" text-anchor="middle" fill="#c8a84b" font-family="monospace" font-size="10" font-weight="600">~80% UPI ✓</text>
+        <text x="84" y="295" text-anchor="middle" fill="#7a7a8a" font-family="monospace" font-size="10">Oct</text>
+        <text x="154" y="295" text-anchor="middle" fill="#7a7a8a" font-family="monospace" font-size="10">Nov</text>
+        <text x="214" y="295" text-anchor="middle" fill="#7a7a8a" font-family="monospace" font-size="10">Dec</text>
+        <text x="275" y="295" text-anchor="middle" fill="#7a7a8a" font-family="monospace" font-size="10">Jan</text>
+        <text x="340" y="295" text-anchor="middle" fill="#7a7a8a" font-family="monospace" font-size="10">Feb</text>
+        <text x="399" y="295" text-anchor="middle" fill="#7a7a8a" font-family="monospace" font-size="10">Mar</text>
+        <text x="444" y="295" text-anchor="middle" fill="#c8a84b" font-family="monospace" font-size="10">Now</text>
+        <rect x="50" y="320" width="12" height="12" fill="url(#bg1)" rx="1"/>
+        <text x="68" y="330" fill="#7a7a8a" font-family="monospace" font-size="10">Churn Rate</text>
+        <rect x="195" y="320" width="12" height="12" fill="url(#bg2)" rx="1"/>
+        <text x="213" y="330" fill="#7a7a8a" font-family="monospace" font-size="10">Txn Success</text>
+        <line x1="360" y1="326" x2="376" y2="326" stroke="#c8a84b" stroke-width="2.5"/>
+        <circle cx="368" cy="326" r="3" fill="#c8a84b"/>
+        <text x="382" y="330" fill="#7a7a8a" font-family="monospace" font-size="10">Trend</text>
+      </svg>
+    </div>
+    <div class="stat-badges">
+      <div class="stat-badge"><span class="num">39K+</span><span class="label">Records Cleaned</span></div>
+      <div class="stat-badge"><span class="num">20+</span><span class="label">Dashboards Built</span></div>
+      <div class="stat-badge"><span class="num">10+</span><span class="label">KPIs Tracked</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="about-left">
+    <div class="section-label">About Me</div>
+    <h2>Data-curious. Insight-obsessed.</h2>
+    <p class="about-body">I'm a Data Analyst with 6+ months of hands-on experience in data analysis, dashboard development, and KPI reporting across financial and transactional datasets.</p>
+    <p class="about-body">Currently interning at Ai Variant, Bangalore — cleaning and transforming large financial datasets, building interactive dashboards in Excel, Power BI, and Tableau, and querying MySQL databases to deliver actionable insights.</p>
+    <p class="about-body">B.Tech in Computer Technology from YCCE Nagpur · Certified Data Analyst (ExcelR, Dec 2025).</p>
+    <button class="btn-primary" onclick="downloadResume()" style="margin-top:1rem;">⬇ Download Resume</button>
+  </div>
+  <div class="about-right">
+    <div class="section-label">Technical Stack</div>
+    <h2>Tools I work with</h2>
+    <div class="skills-grid" style="margin-top: 2rem;">
+      <div class="skill-item"><div class="skill-dot"></div>SQL & MySQL</div>
+      <div class="skill-item"><div class="skill-dot"></div>Python</div>
+      <div class="skill-item"><div class="skill-dot"></div>Power BI</div>
+      <div class="skill-item"><div class="skill-dot"></div>Tableau</div>
+      <div class="skill-item"><div class="skill-dot"></div>Advanced Excel</div>
+      <div class="skill-item"><div class="skill-dot"></div>Pandas & NumPy</div>
+      <div class="skill-item"><div class="skill-dot"></div>ETL Pipelines</div>
+      <div class="skill-item"><div class="skill-dot"></div>Git</div>
+      <div class="skill-item"><div class="skill-dot"></div>Exploratory Data Analysis</div>
+      <div class="skill-item"><div class="skill-dot"></div>Statistical Reporting</div>
+      <div class="skill-item"><div class="skill-dot"></div>Dashboard Development</div>
+      <div class="skill-item"><div class="skill-dot"></div>KPI Reporting</div>
+    </div>
+  </div>
+</section>
+
+<div id="tools">
+  <div class="marquee-wrapper">
+    <div class="marquee-track">
+      <span class="marquee-item"><span class="marquee-dot"></span>SQL</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>Python</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>Power BI</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>Tableau</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>Advanced Excel</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>Pandas</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>NumPy</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>MySQL</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>ETL</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>Git</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>EDA</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>KPI Reporting</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>SQL</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>Python</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>Power BI</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>Tableau</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>Advanced Excel</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>Pandas</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>NumPy</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>MySQL</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>ETL</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>Git</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>EDA</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>KPI Reporting</span>
+    </div>
+  </div>
+</div>
+
+<section id="projects">
+  <div class="projects-header">
+    <div>
+      <div class="section-label">Featured Work</div>
+      <h2>Projects &amp; Case Studies</h2>
+    </div>
+    <p style="font-size:0.78rem;color:var(--muted);max-width:300px;line-height:1.8;">Click any project card to explore the full methodology, tools, and findings.</p>
+  </div>
+  <div class="projects-grid">
+    <div class="project-card fade-up" onclick="openModal('churn')">
+      <div class="project-num">01 / 02</div>
+      <div class="project-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#c8a84b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      </div>
+      <h3>Customer Churn Analysis</h3>
+      <p class="project-desc">Analyzed 7,000+ customer records using SQL and Excel to identify churn drivers, behavioral patterns, and KPIs across multiple cohorts. Built an interactive Power BI dashboard showcasing churn rate, revenue risk, and customer lifecycle metrics.</p>
+      <div class="project-tags"><span class="tag">SQL</span><span class="tag">Excel</span><span class="tag">Power BI</span><span class="tag">EDA</span><span class="tag">Segmentation</span></div>
+      <div class="click-hint">↗ Click to explore full case study</div>
+    </div>
+    <div class="project-card fade-up" onclick="openModal('upi')">
+      <div class="project-num">02 / 02</div>
+      <div class="project-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#c8a84b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      </div>
+      <h3>UPI Transaction Performance &amp; Insights Dashboard</h3>
+      <p class="project-desc">Examined 20,000+ transaction records across 4 banks to assess success rates (~80%), failure patterns, and payment performance. Developed dynamic dashboards with time-series and category-wise analysis.</p>
+      <div class="project-tags"><span class="tag">SQL</span><span class="tag">Excel</span><span class="tag">Power BI</span><span class="tag">Time-Series</span><span class="tag">Regional Analysis</span></div>
+      <div class="click-hint">↗ Click to explore full case study</div>
+    </div>
+  </div>
+</section>
+
+<!-- MODAL: Churn -->
+<div class="modal-overlay" id="modal-churn" onclick="closeModalOutside(event,'churn')">
+  <div class="modal">
+    <div class="modal-header">
+      <button class="modal-close" onclick="closeModal('churn')">✕</button>
+      <div class="modal-tag">Case Study · 01 / 02</div>
+      <div class="modal-title">Customer Churn Analysis</div>
+    </div>
+    <div class="modal-body">
+      <div class="modal-section"><h4>Project Overview</h4><p>A comprehensive churn analysis on 7,000+ customer records to identify why customers were leaving, which segments were at highest risk, and what interventions could improve retention.</p></div>
+      <div class="modal-section"><h4>What I Did</h4>
+        <ul>
+          <li>Cleaned and preprocessed 7,000+ records using SQL and Advanced Excel — handling nulls, duplicates, and inconsistent formats.</li>
+          <li>Conducted KPI reporting across key metrics: churn rate, revenue risk, customer lifetime value, and cohort retention.</li>
+          <li>Performed EDA and customer segmentation to identify behavioral patterns among churned vs. retained customers.</li>
+          <li>Designed an interactive Power BI dashboard showcasing churn rate, revenue risk, and customer lifecycle metrics.</li>
+          <li>Generated actionable insights and recommendations to strengthen customer retention strategies.</li>
+        </ul>
+      </div>
+      <div class="modal-section"><h4>Key Findings</h4>
+        <ul>
+          <li>Identified top churn drivers: pricing dissatisfaction, low engagement frequency, and support friction.</li>
+          <li>High-risk segment accounted for a disproportionate share of churned revenue despite being a small portion of the base.</li>
+          <li>Month 3–5 of customer lifecycle showed the highest churn probability — critical intervention window identified.</li>
+        </ul>
+      </div>
+      <div class="modal-section"><h4>Tools & Technologies</h4>
+        <div class="modal-tags"><span class="tag">SQL</span><span class="tag">Advanced Excel</span><span class="tag">Power BI</span><span class="tag">EDA</span><span class="tag">Customer Segmentation</span><span class="tag">KPI Reporting</span></div>
+      </div>
+      <div class="modal-links"><a href="https://github.com/pranaychahankar09/customer-churn-analysis" target="_blank" class="btn-primary">View on GitHub →</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: UPI -->
+<div class="modal-overlay" id="modal-upi" onclick="closeModalOutside(event,'upi')">
+  <div class="modal">
+    <div class="modal-header">
+      <button class="modal-close" onclick="closeModal('upi')">✕</button>
+      <div class="modal-tag">Case Study · 02 / 02</div>
+      <div class="modal-title">UPI Transaction Performance &amp; Insights Dashboard</div>
+    </div>
+    <div class="modal-body">
+      <div class="modal-section"><h4>Project Overview</h4><p>A large-scale analysis of 20,000+ UPI transaction records across 4 banks, focused on understanding success/failure rates, regional patterns, and payment behavior to surface operational inefficiencies.</p></div>
+      <div class="modal-section"><h4>What I Did</h4>
+        <ul>
+          <li>Examined 20,000+ transaction records across 4 banks to assess success rates (~80%), failure patterns, and payment performance.</li>
+          <li>Developed dynamic dashboards illustrating transaction trends, regional activity, and payment behavior across multiple categories.</li>
+          <li>Performed time-series analysis to detect peak transaction periods and seasonal patterns.</li>
+          <li>Conducted category-wise analysis to surface operational inefficiencies and highlight key improvement areas.</li>
+          <li>Delivered structured reports with actionable recommendations to support data-driven decisions.</li>
+        </ul>
+      </div>
+      <div class="modal-section"><h4>Key Findings</h4>
+        <ul>
+          <li>Overall transaction success rate of ~80%; failure clustering identified in specific time windows and bank pairs.</li>
+          <li>Regional analysis revealed high-activity zones contributing the majority of total transaction volume.</li>
+          <li>Weekend transaction volumes were significantly lower than weekdays, with failure rates inversely higher — suggesting infrastructure scaling gaps.</li>
+          <li>Category-wise breakdown: utility payments had the highest failure rate vs. peer-to-peer transfers.</li>
+        </ul>
+      </div>
+      <div class="modal-section"><h4>Tools & Technologies</h4>
+        <div class="modal-tags"><span class="tag">SQL</span><span class="tag">Advanced Excel</span><span class="tag">Power BI</span><span class="tag">Time-Series Analysis</span><span class="tag">EDA</span><span class="tag">Regional Analysis</span></div>
+      </div>
+      <div class="modal-links"><a href="https://github.com/pranaychahankar09/upi-transactions-analysis" target="_blank" class="btn-primary">View on GitHub →</a></div>
+    </div>
+  </div>
+</div>
+
+<section id="experience">
+  <div class="exp-left">
+    <div class="section-label">Career</div>
+    <h2>Where I've worked</h2>
+    <p style="font-size:0.82rem;color:var(--muted);line-height:1.9;margin-top:1.5rem;">Hands-on industry experience in data analysis, reporting, and dashboard development across financial and transactional domains.</p>
+    <div style="margin-top:3rem;"><button class="btn-primary" onclick="downloadResume()">⬇ Download CV</button></div>
+  </div>
+  <div class="exp-right">
+    <div class="exp-item fade-up">
+      <div class="exp-date">Oct 2025 – Present</div>
+      <div class="exp-content">
+        <h3>Data Analyst Intern</h3>
+        <div class="exp-company">◈ Ai Variant, Bangalore</div>
+        <div class="exp-body"><ul>
+          <li>Cleaned, validated, and transformed financial datasets of 39,000+ records using Advanced Excel and SQL.</li>
+          <li>Conducted KPI reporting across 5+ metrics and EDA to uncover trends and customer behavior patterns.</li>
+          <li>Developed 3 interactive dashboards in Excel, Power BI, and Tableau for stakeholder-ready presentation.</li>
+          <li>Extracted and queried data from MySQL databases, delivering reports with actionable recommendations.</li>
+        </ul></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="certifications">
+  <div class="section-label">Credentials</div>
+  <h2>Certifications &amp; Education</h2>
+  <div class="certs-grid">
+    <div class="cert-card fade-up">
+      <div class="cert-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c8a84b" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg></div>
+      <div class="cert-name">Data Analytics Certification</div>
+      <div class="cert-issuer">ExcelR</div>
+      <div class="cert-date">Dec 2025</div>
+    </div>
+    <div class="cert-card fade-up">
+      <div class="cert-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c8a84b" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>
+      <div class="cert-name">Power BI Desktop for Business Intelligence</div>
+      <div class="cert-issuer">Udemy</div>
+      <div class="cert-date">Dec 2024</div>
+    </div>
+    <div class="cert-card fade-up">
+      <div class="cert-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c8a84b" stroke-width="1.8" stroke-linecap="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div>
+      <div class="cert-name">Python Fundamentals</div>
+      <div class="cert-issuer">Infosys Springboard</div>
+      <div class="cert-date">Jan 2023</div>
+    </div>
+    <div class="cert-card fade-up" style="grid-column:1/-1;max-width:380px;">
+      <div class="cert-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c8a84b" stroke-width="1.8" stroke-linecap="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div>
+      <div class="cert-name">B.Tech – Computer Technology</div>
+      <div class="cert-issuer">Yeshwantrao Chavan College of Engineering, Nagpur</div>
+      <div class="cert-date">2021 – 2025 · CGPA 7.33</div>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="contact-left">
+    <div class="section-label">Let's Talk</div>
+    <h2>Open to new opportunities</h2>
+    <p>Whether you have a role, a project, or just want to talk data — I'd love to hear from you. Actively seeking full-time Data Analyst positions.</p>
+    <div class="contact-links">
+      <a href="mailto:pranaychahankar9@gmail.com" class="contact-link">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        pranaychahankar9@gmail.com
+        <svg class="link-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+      </a>
+      <a href="https://www.linkedin.com/in/pranay-chahankar-2201b22ab/" target="_blank" class="contact-link">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        linkedin.com/in/pranaychahankar
+        <svg class="link-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+      </a>
+      <a href="https://github.com/pranaychahankar09?tab=repositories" target="_blank" class="contact-link">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+        github.com/pranaychahankar
+        <svg class="link-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <div class="contact-form">
+    <div class="section-label" style="margin-bottom:2rem;">Send a Message</div>
+    <div class="form-field"><label>Your Name</label><input type="text" id="from_name" placeholder="Recruiter / Colleague"/></div>
+    <div class="form-field"><label>Email Address</label><input type="email" id="from_email" placeholder="you@company.com"/></div>
+    <div class="form-field"><label>Subject</label><input type="text" id="subject" placeholder="Job Opportunity / Project Enquiry"/></div>
+    <div class="form-field"><label>Message</label><textarea rows="5" id="message" placeholder="Tell me about the role or project..."></textarea></div>
+    <button class="form-submit" id="send-btn" onclick="sendMessage()">Send Message →</button>
+    <div class="form-status" id="form-status"></div>
+  </div>
+</section>
+
+<footer>
+  <span>© 2026 Pranay Chahankar · Data Analyst</span>
+  <span style="color:var(--gold);">Open to Opportunities</span>
+  <span>Pune, India</span>
+</footer>
+
+<script>
+// ═══════════════════════════════════════════════════
+//  STEP 1 — EMAILJS SETUP (to make contact form live)
+//  Go to https://emailjs.com → Sign up free
+//  Create an Email Service (connect your Gmail)
+//  Create an Email Template with these variables:
+//    {{from_name}}  {{from_email}}  {{subject}}  {{message}}
+//  Paste your keys below:
+// ═══════════════════════════════════════════════════
+const EMAILJS_PUBLIC_KEY  = 'DZhhGSmgQ6gMcnuW_';
+const EMAILJS_SERVICE_ID  = 'service_mxmxvmq';
+const EMAILJS_TEMPLATE_ID = 'template_h91ek7v';
+
+(function(){ try { emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY }); } catch(e){} })();
+
+function sendMessage() {
+  const name    = document.getElementById('from_name').value.trim();
+  const email   = document.getElementById('from_email').value.trim();
+  const subject = document.getElementById('subject').value.trim();
+  const message = document.getElementById('message').value.trim();
+  const btn     = document.getElementById('send-btn');
+  const status  = document.getElementById('form-status');
+  status.className = 'form-status'; status.style.display = 'none';
+
+  if (!name || !email || !message) {
+    status.className = 'form-status error';
+    status.textContent = '✕ Please fill in your name, email, and message.';
+    return;
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    status.className = 'form-status error';
+    status.textContent = '✕ Please enter a valid email address.';
+    return;
+  }
+
+  if (EMAILJS_PUBLIC_KEY === 'YOUR_PUBLIC_KEY') {
+    // Demo mode — shows success animation without sending
+    btn.disabled = true; btn.textContent = 'Sending...';
+    setTimeout(() => {
+      status.className = 'form-status success';
+      status.textContent = '✓ Demo mode — message simulated! Add your EmailJS keys to make this live.';
+      btn.textContent = 'Message Sent ✓'; btn.style.background = 'var(--green)';
+      setTimeout(() => { btn.disabled = false; btn.textContent = 'Send Message →'; btn.style.background = ''; }, 4000);
+    }, 1200);
+    return;
+  }
+
+  btn.disabled = true; btn.textContent = 'Sending...';
+  emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+    from_name: name, from_email: email,
+    subject: subject || 'Portfolio Contact', message,
+    to_email: 'pranaychahankar9@gmail.com'
+  }).then(() => {
+    status.className = 'form-status success';
+    status.textContent = "✓ Message sent! Pranay will get back to you within 24 hours.";
+    btn.textContent = 'Message Sent ✓'; btn.style.background = 'var(--green)';
+    ['from_name','from_email','subject','message'].forEach(id => document.getElementById(id).value = '');
+    setTimeout(() => { btn.disabled = false; btn.textContent = 'Send Message →'; btn.style.background = ''; }, 5000);
+  }).catch(err => {
+    status.className = 'form-status error';
+    status.textContent = '✕ Failed to send. Please email pranaychahankar6@gmail.com directly.';
+    btn.disabled = false; btn.textContent = 'Send Message →';
+  });
+}
+
+// ═══════════════════════════════════════════════════
+//  STEP 2 — RESUME DOWNLOAD
+//  Upload your PDF to Google Drive → Share → Copy link
+//  Change the URL from:  .../view?usp=sharing
+//  To:  https://drive.google.com/uc?export=download&id=YOUR_FILE_ID
+//  Paste it below as RESUME_URL:
+// ═══════════════════════════════════════════════════
+function downloadResume() {
+  const RESUME_URL = 'https://drive.google.com/uc?export=download&id=1doS_QHkC12bgWuXn-Fj4Xftprs4hech4';
+  if (RESUME_URL === 'https://drive.google.com/file/d/1doS_QHkC12bgWuXn-Fj4Xftprs4hech4/uc?export=download&id=YOUR_FILE_ID') {
+    alert('📄 To enable resume download:\n\n1. Upload your PDF to Google Drive\n2. Right-click → Share → "Anyone with link"\n3. Copy the link and change "/view" to "/uc?export=download"\n4. Paste it as RESUME_URL in this file\'s script');
+    return;
+  }
+  const a = document.createElement('a');
+  a.href = RESUME_URL; a.download = 'Pranay_Chahankar_Resume.pdf'; a.target = '_blank';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+
+// Project Modals
+function openModal(id) { document.getElementById('modal-'+id).classList.add('open'); document.body.style.overflow='hidden'; }
+function closeModal(id) { document.getElementById('modal-'+id).classList.remove('open'); document.body.style.overflow=''; }
+function closeModalOutside(e, id) { if (e.target===document.getElementById('modal-'+id)) closeModal(id); }
+document.addEventListener('keydown', e => {
+  if (e.key==='Escape') document.querySelectorAll('.modal-overlay.open').forEach(m=>{ m.classList.remove('open'); document.body.style.overflow=''; });
+});
+
+// Scroll reveal
+const obs = new IntersectionObserver(entries=>entries.forEach(e=>{ if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);} }), {threshold:0.12});
+document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+
+// Nav active
+const secs = document.querySelectorAll('section[id]');
+const links = document.querySelectorAll('.nav-links a');
+window.addEventListener('scroll', () => {
+  let cur=''; secs.forEach(s=>{ if(window.scrollY>=s.offsetTop-200) cur=s.id; });
+  links.forEach(a=>{ a.style.color=a.getAttribute('href')==='#'+cur?'var(--ink)':''; });
+});
+</script>
+</body>
+</html>
